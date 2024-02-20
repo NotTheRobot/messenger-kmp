@@ -49,6 +49,8 @@ kotlin {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(libs.voyager.navigator)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.screenmodel)
             implementation(libs.composeImageLoader)
             implementation(libs.kermit)
             implementation(libs.kotlinx.coroutines.core)
