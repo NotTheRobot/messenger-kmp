@@ -9,6 +9,12 @@ plugins {
     alias(libs.plugins.sqlDelight)
 }
 
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
 kotlin {
     androidTarget {
         compilations.all {
@@ -18,7 +24,8 @@ kotlin {
         }
     }
 
-    jvm()
+    jvm{
+    }
 
     js {
         browser()
@@ -42,6 +49,7 @@ kotlin {
                 optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
             }
         }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.material3)
@@ -156,3 +164,4 @@ sqldelight {
         }
     }
 }
+

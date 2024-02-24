@@ -1,11 +1,12 @@
 [versions]
 
 kotlin = "1.9.21"
-compose = "1.5.11"
+compose = "1.6.0-rc03"
 agp = "8.2.2"
 androidx-appcompat = "1.6.1"
 androidx-activityCompose = "1.8.2"
 compose-uitooling = "1.6.1"
+resourcesGenerator = "0.23.0"
 voyager = "1.0.0"
 composeImageLoader = "1.7.1"
 kermit = "2.0.0-RC4"
@@ -27,6 +28,8 @@ androidx-activityCompose = { module = "androidx.activity:activity-compose", vers
 
 compose-uitooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-uitooling" }
 
+resources-generator = { module = "dev.icerock.moko:resources", version.ref = "resourcesGenerator" }
+resources-generator-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "resourcesGenerator" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
@@ -68,3 +71,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 sqlDelight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
+resources-generator = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "resourcesGenerator"}

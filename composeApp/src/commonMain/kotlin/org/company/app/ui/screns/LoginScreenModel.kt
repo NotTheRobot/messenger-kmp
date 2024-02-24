@@ -30,7 +30,7 @@ class LoginScreenModel: ScreenModel {
             isError.value = !isError.value
 
         }else{
-
+            navigator.push(ChatListScreen())
         }
     }
 }
