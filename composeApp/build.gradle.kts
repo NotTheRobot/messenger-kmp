@@ -68,6 +68,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.core)
             implementation(libs.kstore)
+            implementation(libs.constraintlayout)
         }
 
         commonTest.dependencies {
@@ -132,6 +133,9 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
+}
+dependencies {
+    implementation(libs.androidx.ui.tooling.preview.desktop)
 }
 
 compose.desktop {

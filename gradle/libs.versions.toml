@@ -1,7 +1,8 @@
 [versions]
 
+constraintlayoutComposeMultiplatform = "0.3.0"
 kotlin = "1.9.21"
-compose = "1.6.0-rc03"
+compose = "1.6.0"
 agp = "8.2.2"
 androidx-appcompat = "1.6.1"
 androidx-activityCompose = "1.8.2"
@@ -19,6 +20,7 @@ kotlinx-datetime = "0.5.0"
 koin = "3.5.3"
 kstore = "0.7.1"
 sqlDelight = "2.0.1"
+uiToolingPreviewDesktop = "1.6.3"
 
 [libraries]
 
@@ -28,6 +30,7 @@ androidx-activityCompose = { module = "androidx.activity:activity-compose", vers
 
 compose-uitooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-uitooling" }
 
+constraintlayout = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
 resources-generator = { module = "dev.icerock.moko:resources", version.ref = "resourcesGenerator" }
 resources-generator-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "resourcesGenerator" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
@@ -40,6 +43,7 @@ kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+
 
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -62,6 +66,7 @@ sqlDelight-driver-sqlite = { module = "app.cash.sqldelight:sqlite-driver", versi
 sqlDelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 sqlDelight-driver-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqlDelight" }
+androidx-ui-tooling-preview-desktop = { group = "androidx.compose.ui", name = "ui-tooling-preview-desktop", version.ref = "uiToolingPreviewDesktop" }
 
 [plugins]
 

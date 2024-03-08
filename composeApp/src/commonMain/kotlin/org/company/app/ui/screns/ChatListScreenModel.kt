@@ -8,7 +8,33 @@ import kotlin.random.Random
 
 
 class ChatListScreenModel: ScreenModel {
-    val listOfChats = mutableStateOf(generateCharts(10))
+    val listOfChats = mutableStateOf(generateCharts(20))
+    val textField = mutableStateOf("")
+    val messages = mutableStateOf(generateMessages(20))
+
+    private fun generateMessages(amount: Int): MutableList<Message> {
+        val piece = "ну здарова нахуй"
+        val messages = mutableListOf<Message>()
+        messages.add(Message(
+            sender = "me",
+            message = piece,
+            DateTimeUnit.HOUR
+        ))
+
+        for(i in 1..amount) {
+            val sender = if (Random.nextInt() % 2 == 0) "me" else "not me"
+            val pieces = mutableListOf<String>()
+            repeat(Random.nextInt(from = 50, until = 100)) {
+                pieces.add(piece)
+            }
+            messages.add(Message(
+                sender,
+                pieces.joinToString(separator = "") { it },
+                DateTimeUnit.HOUR * Random.nextInt(from = 1, until = 24)
+                ))
+        }
+        return messages
+    }
 
     fun generateCharts(amount: Int): MutableList<ChatInfo> {
         val charts = mutableListOf<ChatInfo>()
@@ -22,7 +48,7 @@ class ChatListScreenModel: ScreenModel {
                     Random.nextInt() % 2 == 0,
                     DateTimeUnit.HOUR * Random.nextInt(from = 1, until = 24),
                     Random.nextInt().toString(),
-                    Random.nextInt().toString()
+                    "lkjdsflah kljdflk jsldkfh slkfhslkd hsfjlk jsklf jsdlkf jskj"
                 )
             )
         }
@@ -39,4 +65,10 @@ data class ChatInfo(
     val time: DateTimeUnit,
     val lastSender: String,
     val lastMessage: String
+)
+
+data class Message(
+    val sender: String,
+    val message: String,
+    val time: DateTimeUnit
 )
