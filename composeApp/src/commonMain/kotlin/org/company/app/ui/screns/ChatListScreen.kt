@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -14,11 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -35,27 +40,37 @@ import compose.icons.tablericons.Checks
 import compose.icons.tablericons.Send
 import firstmultiplatfporm.composeapp.generated.resources.Res
 import firstmultiplatfporm.composeapp.generated.resources.mcqueen
+import org.company.app.utils.PlatformSpecific
 import org.jetbrains.compose.resources.painterResource
 
 class ChatListScreen: Screen {
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     override fun Content() {
         val screenModel = rememberScreenModel { ChatListScreenModel() }
         val chats by screenModel.listOfChats
-        Row(){
-            leftFrame(chats)
-            rightFrame(screenModel)
+        BoxWithConstraints {
+            if (maxWidth > 720.dp){
+                Row(){
+                    leftFrame(chats, modifier = Modifier.width(360.dp))
+                    rightFrame(screenModel)
+                }
+            }else{
+                leftFrame(chats, modifier = Modifier.fillMaxWidth())
+            }
         }
+
     }
 
     @Composable
-    fun leftFrame(chats: MutableList<ChatInfo>){
+    fun leftFrame(chats: MutableList<ChatInfo>, modifier: Modifier){
         LazyColumn(
-            modifier = Modifier.fillMaxHeight()
+            modifier = modifier
                 .windowInsetsPadding(WindowInsets.safeDrawing)
+                .fillMaxHeight()
                 .padding(start = 8.dp, top = 8.dp, end = 8.dp)
-                .width(348.dp)
+
         ) {
             items(chats) {
                 Container(it)
@@ -173,6 +188,7 @@ class ChatListScreen: Screen {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (messages, editField, sendButton) = createRefs()
             LazyColumn(
+                state = rememberLazyListState(Int.MAX_VALUE),
                 modifier = Modifier
                     .constrainAs(messages){
                         top.linkTo(parent.top)

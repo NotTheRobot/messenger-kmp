@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.painter.Painter
 import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.datetime.DateTimeUnit
+import org.company.app.utils.PlatformSpecific
 import kotlin.random.Random
 
 
@@ -11,6 +12,8 @@ class ChatListScreenModel: ScreenModel {
     val listOfChats = mutableStateOf(generateCharts(20))
     val textField = mutableStateOf("")
     val messages = mutableStateOf(generateMessages(20))
+
+
 
     private fun generateMessages(amount: Int): MutableList<Message> {
         val piece = "ну здарова нахуй"
