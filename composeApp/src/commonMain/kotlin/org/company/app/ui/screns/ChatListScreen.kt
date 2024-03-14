@@ -6,29 +6,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
@@ -40,31 +33,37 @@ import compose.icons.tablericons.Checks
 import compose.icons.tablericons.Send
 import firstmultiplatfporm.composeapp.generated.resources.Res
 import firstmultiplatfporm.composeapp.generated.resources.mcqueen
-import org.company.app.utils.PlatformSpecific
 import org.jetbrains.compose.resources.painterResource
 
 class ChatListScreen: Screen {
 
-    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     override fun Content() {
         val screenModel = rememberScreenModel { ChatListScreenModel() }
-        val chats by screenModel.listOfChats
+        val chats = screenModel.listOfChats.collectAsState(initial = listOf()).value
         BoxWithConstraints {
             if (maxWidth > 720.dp){
                 Row(){
-                    leftFrame(chats, modifier = Modifier.width(360.dp))
+                    leftFrame(
+                        chats = chats,
+                        screenModel = screenModel,
+                        modifier = Modifier.width(360.dp)
+                    )
                     rightFrame(screenModel)
                 }
             }else{
-                leftFrame(chats, modifier = Modifier.fillMaxWidth())
+                leftFrame(
+                    chats = chats,
+                    screenModel = screenModel,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
 
     }
 
     @Composable
-    fun leftFrame(chats: MutableList<ChatInfo>, modifier: Modifier){
+    fun leftFrame(chats: List<ChatInfo>, screenModel: ChatListScreenModel, modifier: Modifier){
         LazyColumn(
             modifier = modifier
                 .windowInsetsPadding(WindowInsets.safeDrawing)
@@ -72,18 +71,30 @@ class ChatListScreen: Screen {
                 .padding(start = 8.dp, top = 8.dp, end = 8.dp)
 
         ) {
-            items(chats) {
-                Container(it)
+            if(chats != null){
+                items(chats) {
+                    ChatContainer(it, screenModel)
+                }
             }
         }
     }
     @Composable
-    fun Container(chatInfo: ChatInfo) {
-        Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-            val defaultImg = painterResource(Res.drawable.mcqueen)
+    fun ChatContainer(chatInfo: ChatInfo, screenModel: ChatListScreenModel) {
+        Button(
+            onClick = {
+                screenModel.currentChatId.value = chatInfo.chatId
+                screenModel.updateMessages()
+            }
+        ){
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+        ) {
+            val image = painterResource(Res.drawable.mcqueen)
             Image(
-                chatInfo.imageRef ?: defaultImg,
-                " ",
+                image,
+                null,
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -180,27 +191,45 @@ class ChatListScreen: Screen {
 
             }
         }
+            }
     }
     @Composable
     private fun rightFrame(screenModel: ChatListScreenModel) {
         var textField by screenModel.textField
         val messagesList by screenModel.messages
+        val currentChatId by screenModel.currentChatId
+
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (messages, editField, sendButton) = createRefs()
-            LazyColumn(
-                state = rememberLazyListState(Int.MAX_VALUE),
-                modifier = Modifier
-                    .constrainAs(messages){
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(editField.top)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
+            if(currentChatId == ""){
+                Text(
+                    text = "Напишите что нибудь",
+                    modifier = Modifier
+                        .constrainAs(messages){
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(editField.top)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        }
+                )
+            }else {
+                LazyColumn(
+                    state = rememberLazyListState(Int.MAX_VALUE),
+                    modifier = Modifier
+                        .constrainAs(messages) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(editField.top)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        }
+                ) {
+                    items(messagesList) {
+                        MessageBlock(it)
                     }
-            ) {
-                items(messagesList){
-                    MessageBlock(it)
                 }
             }
             TextField(
@@ -238,10 +267,9 @@ class ChatListScreen: Screen {
     }
 
     @Composable
-    fun MessageBlock(item: Message) {
-        val constraints = getConstraintsFor(item.sender)
+    fun MessageBlock(item: MessageInfo) {
+        val constraints = getConstraintsFor(item.senderUserId)
         val defaultImg = painterResource(Res.drawable.mcqueen)
-
         ConstraintLayout(
             constraintSet = constraints,
             modifier = Modifier.fillMaxWidth(),
@@ -256,7 +284,7 @@ class ChatListScreen: Screen {
                     .clip(RoundedCornerShape(100))
             )
             Text(
-                item.sender,
+                item.senderName,
                 modifier = Modifier.layoutId("sender")
             )
             Box(modifier = Modifier

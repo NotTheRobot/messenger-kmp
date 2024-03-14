@@ -1,77 +1,104 @@
 package org.company.app.ui.screns
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.painter.Painter
 import cafe.adriel.voyager.core.model.ScreenModel
-import kotlinx.datetime.DateTimeUnit
-import org.company.app.utils.PlatformSpecific
-import kotlin.random.Random
+import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.datetime.*
+import org.company.app.data.mappers.toChatInfo
+import org.company.app.data.mappers.toMessageInfo
+import org.company.app.data.Repository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
+class ChatListScreenModel: ScreenModel, KoinComponent {
+    val repository: Repository by inject()
 
-class ChatListScreenModel: ScreenModel {
-    val listOfChats = mutableStateOf(generateCharts(20))
+    val currentChatId = mutableStateOf("")
+    val messages: MutableState<List<MessageInfo>> = mutableStateOf(listOf())
+    init {
+        updateMessages()
+    }
+    var listOfChats: StateFlow<List<ChatInfo>> = loadChats()
     val textField = mutableStateOf("")
-    val messages = mutableStateOf(generateMessages(20))
 
-
-
-    private fun generateMessages(amount: Int): MutableList<Message> {
-        val piece = "ну здарова нахуй"
-        val messages = mutableListOf<Message>()
-        messages.add(Message(
-            sender = "me",
-            message = piece,
-            DateTimeUnit.HOUR
-        ))
-
-        for(i in 1..amount) {
-            val sender = if (Random.nextInt() % 2 == 0) "me" else "not me"
-            val pieces = mutableListOf<String>()
-            repeat(Random.nextInt(from = 50, until = 100)) {
-                pieces.add(piece)
+    fun updateMessages() {
+        messages.value = repository.loadMessages(currentChatId.value).map {
+            val user = repository.getUserById(it.senderUserId)
+            it.toMessageInfo(user)
+        }
+    }
+    fun loadChats(): StateFlow<List<ChatInfo>> {
+        return repository
+            .loadTwentyChats()
+            .map {list ->
+                list.map{
+                    val message = repository.getMessagesAsList(it.id)
+                    it.toChatInfo(message)
+                }
             }
-            messages.add(Message(
-                sender,
-                pieces.joinToString(separator = "") { it },
-                DateTimeUnit.HOUR * Random.nextInt(from = 1, until = 24)
-                ))
-        }
-        return messages
+            .stateIn(
+                scope = screenModelScope,
+                started = SharingStarted.Lazily,
+                initialValue = listOf()
+            )
     }
 
-    fun generateCharts(amount: Int): MutableList<ChatInfo> {
-        val charts = mutableListOf<ChatInfo>()
-        for(i in 1..amount){
-            charts.add(
-                ChatInfo(
-                    Random.nextInt().toString(),
-                    Random.nextInt().toString(),
-                    null,
-                    Random.nextInt(from = -500, until = 999),
-                    Random.nextInt() % 2 == 0,
-                    DateTimeUnit.HOUR * Random.nextInt(from = 1, until = 24),
-                    Random.nextInt().toString(),
-                    "lkjdsflah kljdflk jsldkfh slkfhslkd hsfjlk jsklf jsdlkf jskj"
-                )
-            )
-        }
-        return charts
+
+    fun tapOnChat(chatId: String){
+        currentChatId.value = chatId
+        textField.value = ""
     }
+
+    suspend fun generateChatWithMessage(){
+        screenModelScope.launch {
+            repository.generateMessage(true)
+        }
+    }
+
+    fun generateChatWithoutMessage(){
+        screenModelScope.launch {
+            repository.generateMessage(false)
+        }
+    }
+}
+
+public fun <T> Flow<T>.mutableStateIn(
+    scope: CoroutineScope,
+    initialValue: T
+): MutableStateFlow<T>{
+    val flow = MutableStateFlow(initialValue)
+    scope.launch {
+        this@mutableStateIn.collect(flow)
+    }
+    return flow
 }
 
 data class ChatInfo(
     val chatId: String,
     val chatName: String,
-    val imageRef: Painter?,
+    val imageRef: String?,
     val newMessages: Int,
     val isRead: Boolean,
-    val time: DateTimeUnit,
+    val time: LocalDateTime,
     val lastSender: String,
     val lastMessage: String
 )
 
-data class Message(
-    val sender: String,
+data class MessageInfo(
+    val id: String,
+    val senderUserId: String,
+    val senderName: String,
+    val senderImageRef: String,
+    val receiverChatId: String,
     val message: String,
-    val time: DateTimeUnit
+    val time : LocalDateTime,
+    val isRead: Long,
+    val imageRef: String?,
+    val soundRef: String?,
+    val gifRef: String?,
 )

@@ -69,6 +69,9 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.kstore)
             implementation(libs.constraintlayout)
+            implementation(libs.sqlDelight.runtime)
+            implementation(libs.sqlDelight.coroutines.extensions)
+
         }
 
         commonTest.dependencies {
@@ -82,6 +85,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqlDelight.driver.android)
+
         }
 
         jvmMain.dependencies {
@@ -96,6 +100,8 @@ kotlin {
             implementation(compose.html.core)
             implementation(libs.ktor.client.js)
             implementation(libs.sqlDelight.driver.js)
+            implementation (npm("sql.js", "1.6.2"))
+            implementation (devNpm("copy-webpack-plugin", "9.1.0"))
         }
 
         iosMain.dependencies {
@@ -134,6 +140,7 @@ android {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
 }
+
 dependencies {
     implementation(libs.androidx.ui.tooling.preview.desktop)
 }
@@ -162,8 +169,6 @@ buildConfig {
 sqldelight {
     databases {
         create("MyDatabase") {
-            // Database configuration here.
-            // https://cashapp.github.io/sqldelight
             packageName.set("org.company.app.db")
         }
     }

@@ -1,28 +1,9 @@
 package org.company.app.data.models
 
+import db.Messages
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.datetime.DateTimeUnit
 
 
-data class User(
-    val userId: String,
-    val username: String,
-    val alterName: String,
-    val email: String,
-    val imageRef: String?,
-)
-
-data class Chat(
-    val chatId: String,
-    val chatName: String,
-    val imageRef: String?,
-)
-
-data class Message(
-    val messageId: String,
-    val senderUserId: String,
-    val receiverChatId: String,
-    val message: String,
-    val imageRefs: String?,
-    val soundRefs: String?,
-    val gifRefs: String?,
-)
 

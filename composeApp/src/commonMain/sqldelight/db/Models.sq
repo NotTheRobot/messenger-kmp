@@ -1,0 +1,41 @@
+CREATE TABLE Users(
+    id TEXT PRIMARY KEY  NOT NULL,
+    alterName TEXT NOT NULL,
+    imageRef TEXT DEFAULT  NULL
+);
+
+INSERT INTO Users (id, alterName, imageRef)
+VALUES ('1', 'Ryan Getzlaf', NULL);
+
+CREATE TABLE Chats (
+    id TEXT PRIMARY KEY  NOT NULL,
+    chatName TEXT NOT NULL,
+    imageRef TEXT DEFAULT  NULL
+);
+
+INSERT INTO Chats (id, chatName, imageRef)
+VALUES ('1', 'Chat name', NULL);
+
+CREATE TABLE User_Chat (
+    chatId TEXT,
+    userId TEXT,
+    FOREIGN KEY (chatId) REFERENCES Chats(id),
+    FOREIGN KEY (userId) REFERENCES Users(id)
+);
+
+
+CREATE TABLE Messages (
+    id TEXT PRIMARY KEY  NOT NULL ,
+    senderUserId TEXT  NOT NULL,
+    receiverChatId TEXT NOT NULL,
+    message TEXT NOT NULL,
+    time INTEGER NOT NULL,
+    isRead INTEGER NOT NULL,
+    imageRefs TEXT DEFAULT NULL ,
+    soundRefs TEXT DEFAULT NULL ,
+    gifRefs TEXT DEFAULT NULL ,
+    FOREIGN KEY (receiverChatId) REFERENCES Chats(id)
+);
+
+INSERT INTO Messages (id, senderUserId, receiverChatId, message, time, isRead)
+VALUES ('1', '1', '1', 'test message', 100000, 1);

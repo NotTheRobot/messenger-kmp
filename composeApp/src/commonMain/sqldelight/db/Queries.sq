@@ -1,0 +1,40 @@
+
+getPreviousMessages:
+SELECT * FROM Messages
+WHERE receiverChatId = ? & time < ?
+ORDER BY time DESC
+LIMIT ?;
+
+getNewMessages:
+SELECT * FROM Messages
+WHERE receiverChatId = ? & time > ?
+ORDER BY time DESC;
+
+getMessages:
+SELECT * FROM Messages
+WHERE receiverChatId = ?
+ORDER BY time DESC
+LIMIT ?;
+
+getUser:
+SELECT * FROM Users
+WHERE id = ?;
+
+getChats:
+SELECT * FROM Chats;
+
+insertChat:
+INSERT OR REPLACE
+INTO Chats (id, chatName, imageRef)
+VALUES(?,?,?);
+
+insertUser:
+INSERT OR REPLACE
+INTO Users (id, alterName, imageRef)
+VALUES(?,?, ?);
+
+insertMessage:
+INSERT OR REPLACE
+INTO Messages (id, senderUserId, receiverChatId, message, time, isRead, imageRefs, soundRefs, gifRefs)
+VALUES(?,?,?,?,?,?,?,?,?);
+
