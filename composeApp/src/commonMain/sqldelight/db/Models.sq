@@ -1,0 +1,32 @@
+CREATE TABLE UserDBO(
+    username TEXT PRIMARY KEY  NOT NULL,
+    alterName TEXT NOT NULL,
+    imageRef TEXT DEFAULT NULL
+);
+
+CREATE TABLE ChatDBO (
+    id TEXT PRIMARY KEY  NOT NULL,
+    chatName TEXT NOT NULL,
+    imageRef TEXT DEFAULT  NULL
+);
+
+CREATE TABLE UserChatDBO (
+    chatId TEXT,
+    userId TEXT,
+    FOREIGN KEY (chatId) REFERENCES ChatDBO(id),
+    FOREIGN KEY (userId) REFERENCES UserDBO(username)
+);
+
+CREATE TABLE MessageDBO (
+    id TEXT PRIMARY KEY  NOT NULL ,
+    receiverChatId TEXT NOT NULL,
+    senderUsername TEXT  NOT NULL,
+    message TEXT NOT NULL,
+    isRead INTEGER NOT NULL,
+    time INTEGER NOT NULL,
+    imageRefs TEXT DEFAULT NULL ,
+    soundRefs TEXT DEFAULT NULL ,
+    gifRefs TEXT DEFAULT NULL ,
+    FOREIGN KEY (receiverChatId) REFERENCES ChatDBO(id)
+);
+

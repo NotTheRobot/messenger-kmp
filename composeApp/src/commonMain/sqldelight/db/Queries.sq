@@ -1,0 +1,40 @@
+
+getPreviousMessages:
+SELECT * FROM MessageDBO
+WHERE receiverChatId = ? & time < ?
+ORDER BY time DESC
+LIMIT ?;
+
+getNewMessages:
+SELECT * FROM MessageDBO
+WHERE receiverChatId = ? & time > ?
+ORDER BY time DESC;
+
+getMessages:
+SELECT * FROM MessageDBO
+WHERE receiverChatId = ?
+ORDER BY time DESC
+LIMIT ?;
+
+getUser:
+SELECT * FROM UserDBO
+WHERE username = ?;
+
+getChats:
+SELECT * FROM ChatDBO;
+
+insertChat:
+INSERT OR REPLACE
+INTO ChatDBO (id, chatName, imageRef)
+VALUES(?,?,?);
+
+insertUser:
+INSERT OR REPLACE
+INTO UserDBO (username, alterName, imageRef)
+VALUES(?,?, ?);
+
+insertMessage:
+INSERT OR REPLACE
+INTO MessageDBO (id, senderUsername, receiverChatId, message, time, isRead, imageRefs, soundRefs, gifRefs)
+VALUES(?,?,?,?,?,?,?,?,?);
+
